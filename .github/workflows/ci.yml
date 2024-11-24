@@ -1,0 +1,31 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - "feature*"
+
+jobs:
+  verify-prerequisites:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run prerequisites script
+        run: ./prerequisites.sh
+
+      - name: Verify tools
+        run: |
+          if ! command -v gpr &> /dev/null; then
+            echo "gpr tool is not installed"
+            exit 1
+          fi
+          if ! command -v xmlstarlet &> /dev/null; then
+            echo "xmlstarlet is not installed"
+            exit 1
+          fi
+          if ! command -v xmllint &> /dev/null; then
+            echo "xmllint is not installed"
+            exit 1
+          fi
