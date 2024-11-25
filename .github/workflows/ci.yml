@@ -1,6 +1,7 @@
 name: Continuous Integration
 
 on:
+  workflow_dispatch:
   push:
     # branches:
     #   - "feature*"
@@ -12,10 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set permissions
+        run: chmod +x prerequisites.sh
+
       - name: Run prerequisites script
         run: ./prerequisites.sh
 
-      - name: Verify tools
+      - name: Verify prerequisites
         run: |
           if ! command -v gpr &> /dev/null; then
             echo "gpr tool is not installed"
