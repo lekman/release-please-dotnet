@@ -35,7 +35,7 @@ jobs:
             echo "xmllint is not installed"
             exit 1
 
-  find-csproj-files:
+  find:
     name: Find .csproj files
     runs-on: ubuntu-latest
     outputs:
@@ -58,10 +58,10 @@ jobs:
 
   build-all-projects:
     name: Build projects
-    needs: find-csproj-files
+    needs: find
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.find-csproj-files.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.find.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
