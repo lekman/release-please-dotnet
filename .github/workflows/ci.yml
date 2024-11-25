@@ -47,7 +47,7 @@ jobs:
       - name: Find project files
         id: find-projects
         run: |
-          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0))')
+          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0) | {csproj: .})')
           echo "projects=$csproj_files" >> $GITHUB_OUTPUT
 
       - name: Create matrix strategy
