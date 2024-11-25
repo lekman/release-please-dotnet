@@ -56,12 +56,13 @@ jobs:
           matrix=$(echo "${{ steps.find-csproj.outputs['csproj-files'] }}" | jq -R 'split("\n")[:-1] | map({ "csproj": . })')
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
-  build-all-projects:
+  build:
     name: Build projects
     needs: find
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.find.outputs.matrix) }}
+      matrix:
+        include: ${{ fromJson(needs.find.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
