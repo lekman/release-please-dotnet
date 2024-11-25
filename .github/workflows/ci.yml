@@ -44,16 +44,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find all .csproj files
-        id: find-csproj
+      - name: Find project files
+        id: find-projects
         run: |
-          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0)) | map({ "csproj": . })')
-          echo "matrix=$csproj_files" >> $GITHUB_OUTPUT
+          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "projects=$csproj_files" >> $GITHUB_OUTPUT
 
       - name: Create matrix strategy
         id: create-matrix
         run: |
-          echo "matrix=${{ steps.find-csproj.outputs.matrix }}" >> $GITHUB_OUTPUT
+          echo "matrix=${{ steps.find-projects.outputs.projects }}" >> $GITHUB_OUTPUT
 
   build:
     name: Build projects
