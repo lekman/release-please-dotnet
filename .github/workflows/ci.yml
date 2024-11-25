@@ -47,13 +47,13 @@ jobs:
       - name: Find all .csproj files
         id: find-csproj
         run: |
-          csproj_files=$(find . -name '*.csproj' -type f -print0 | xargs -0)
+          csproj_files=$(find . -name '*.csproj' -type f)
           echo "csproj-files=$csproj_files" >> $GITHUB_OUTPUT
 
       - name: Create matrix strategy
         id: create-matrix
         run: |
-          matrix=$(echo "${{ steps.find-csproj.outputs['csproj-files'] }}" | jq -R 'split("\n")[:-1] | map({ "csproj": . })')
+          matrix=$(echo "${{ steps.find-csproj.outputs['csproj-files'] }}" | jq -R -s 'split("\n") | map(select(length > 0)) | map({ "csproj": . })')
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   build:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include: ${{ fromJson(needs.find.outputs.matrix) }}
+        csproj: ${{ fromJson(needs.find.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
