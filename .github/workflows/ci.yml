@@ -3,8 +3,8 @@ name: Continuous Integration
 on:
   workflow_dispatch:
   push:
-    branches:
-      - "feature*"
+    branches-ignore:
+      - "main"
 
 jobs:
   verify-prerequisites:
