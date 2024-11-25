@@ -3,11 +3,12 @@ name: Continuous Integration
 on:
   workflow_dispatch:
   push:
-    # branches:
-    #   - "feature*"
+    branches:
+      - "feature*"
 
 jobs:
   verify-prerequisites:
+    name: Verify prerequisites
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,7 +20,7 @@ jobs:
       - name: Run prerequisites script
         run: ./prerequisites.sh
 
-      - name: Verify prerequisites
+      - name: Verify outcome
         run: |
           if ! command -v gpr &> /dev/null; then
             echo "gpr tool is not installed"
