@@ -2,6 +2,7 @@ name: Continuous Integration
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches-ignore:
       - "main"
@@ -34,3 +35,29 @@ jobs:
             echo "xmllint is not installed"
             exit 1
           fi
+  build-all-projects:
+    name: Build all projects
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find all .csproj files to create matrix strategy
+        id: find-csproj
+        run: |
+          echo "::set-output name=csproj-files::$(find . -name '*.csproj' -type f -print0 | xargs -0)"
+
+      - name: Create matrix strategy
+        id: create-matrix
+        run: |
+          echo "::set-output name=matrix::$(echo "${{ steps.find-csproj.outputs.csproj-files }}" | jq -R 'split("\n")[:-1] | map({ "csproj": . })')"
+
+      - name: Build projects
+        run: |
+          for row in $(echo "${{ steps.create-matrix.outputs.matrix }}" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo ${row} | base64 --decode | jq -r ${1}
+            }
+            csproj=$(_jq '.csproj')
+            dotnet build $csproj
+          done
