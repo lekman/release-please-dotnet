@@ -2,8 +2,8 @@ name: Continuous Integration
 
 on:
   push:
-    branches:
-      - "feature*"
+    # branches:
+    #   - "feature*"
 
 jobs:
   verify-prerequisites:
