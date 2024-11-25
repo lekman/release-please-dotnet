@@ -47,14 +47,13 @@ jobs:
       - name: Find all .csproj files
         id: find-csproj
         run: |
-          csproj_files=$(find . -name '*.csproj' -type f)
-          echo "csproj-files=$csproj_files" >> $GITHUB_OUTPUT
+          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0)) | map({ "csproj": . })')
+          echo "matrix=$csproj_files" >> $GITHUB_OUTPUT
 
       - name: Create matrix strategy
         id: create-matrix
         run: |
-          matrix=$(echo "${{ steps.find-csproj.outputs['csproj-files'] }}" | jq -R -s 'split("\n") | map(select(length > 0)) | map({ "csproj": . })')
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "matrix=${{ steps.find-csproj.outputs.matrix }}" >> $GITHUB_OUTPUT
 
   build:
     name: Build projects
@@ -66,6 +65,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
       - name: Build project
         run: dotnet build ${{ matrix.csproj }}
