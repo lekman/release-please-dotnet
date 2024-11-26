@@ -65,16 +65,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET and Build
-        # Use our custom action.yml from the workspace root
-        uses: ./action.yml
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          path: ${{ matrix.project }}
+          dotnet-version: "9.0.x"
 
-      # - name: Setup .NET
-      #   uses: actions/setup-dotnet@v4
-      #   with:
-      #     dotnet-version: "9.0.x"
-
-      # - name: Build project
-      #   run: dotnet build ${{ matrix.project }}
+      - name: Build project
+        run: ./build.sh ${{ matrix.project }}
