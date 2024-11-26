@@ -71,4 +71,6 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Build project
-        run: ./build.sh ${{ matrix.project }}
+        run: |
+          chmod +x build.sh
+          ./build.sh ${{ matrix.project }}
