@@ -47,10 +47,7 @@ jobs:
 
       - name: Find project files
         id: find-projects
-        run: |
-          csproj_files=$(find "$(pwd)" -name '*.csproj' -type f | jq -R -s -c 'split("\n")[:-1]')
-          echo "projects=$(find "$(pwd)" -name '*.csproj' -type f | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
-          echo $csproj_files
+        run: echo "projects=$(find "$(pwd)" -name '*.csproj' -type f | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   build:
     name: Build verification testing
@@ -71,6 +68,4 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Build project
-        run: |
-          chmod +x build.sh
-          ./build.sh ${{ matrix.project }}
+        run: chmod +x build.sh && ./build.sh ${{ matrix.project }}
