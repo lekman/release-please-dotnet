@@ -39,7 +39,7 @@ jobs:
     name: Find .csproj files
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.create-matrix.outputs.matrix }}
+      matrix: ${{ steps.find-projects.outputs.projects }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,13 +47,9 @@ jobs:
       - name: Find project files
         id: find-projects
         run: |
-          csproj_files=$(find . -name '*.csproj' -type f | jq -R -s 'split("\n") | map(select(length > 0) | {csproj: .})')
+          csproj_files=$(find "$(pwd)" -name '*.csproj' -type f | jq -R -s -c 'split("\n")[:-1]')
           echo "projects=$csproj_files" >> $GITHUB_OUTPUT
-
-      - name: Create matrix strategy
-        id: create-matrix
-        run: |
-          echo "matrix=${{ steps.find-projects.outputs.projects }}" >> $GITHUB_OUTPUT
+          echo $csproj_files
 
   build:
     name: Build projects
@@ -61,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        csproj: ${{ fromJson(needs.find.outputs.matrix) }}
+        project: ${{ fromJson(needs.find.outputs.matrix) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,4 +68,4 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Build project
-        run: dotnet build ${{ matrix.csproj }}
+        run: dotnet build ${{ matrix.project }}
