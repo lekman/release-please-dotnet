@@ -47,7 +47,7 @@ jobs:
 
       - name: Find project files
         id: find-projects
-        run: echo "projects=$(find "$(pwd)" -name '*.csproj' -type f | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        run: echo "projects=$(./find.sh "./release-please-config.json")" >> $GITHUB_OUTPUT
 
   build:
     name: Build verification testing
@@ -66,6 +66,9 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "9.0.x"
+
+      - name: Determine version
+        run: chmod +x version.sh && ./version.sh ${{ matrix.project }}
 
       - name: Build project
         run: chmod +x build.sh && ./build.sh ${{ matrix.project }}
