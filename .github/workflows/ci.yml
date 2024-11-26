@@ -34,9 +34,10 @@ jobs:
           if ! command -v xmllint &> /dev/null; then
             echo "xmllint is not installed"
             exit 1
+          fi
 
   find:
-    name: Find .csproj files
+    name: Locate projects
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.find-projects.outputs.projects }}
@@ -52,7 +53,7 @@ jobs:
           echo $csproj_files
 
   build:
-    name: Build projects
+    name: Build verification testing
     needs: find
     runs-on: ubuntu-latest
     strategy:
@@ -62,10 +63,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET and Build
+        # Use our custom action.yml from the workspace root
+        uses: ./action.yml
         with:
-          dotnet-version: "9.0.x"
+          path: ${{ matrix.project }}
 
-      - name: Build project
-        run: dotnet build ${{ matrix.project }}
+      # - name: Setup .NET
+      #   uses: actions/setup-dotnet@v4
+      #   with:
+      #     dotnet-version: "9.0.x"
+
+      # - name: Build project
+      #   run: dotnet build ${{ matrix.project }}
