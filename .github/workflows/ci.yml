@@ -47,7 +47,7 @@ jobs:
 
       - name: Find project files
         id: find-projects
-        run: echo "projects=$(./find.sh "./release-please-config.json")" >> $GITHUB_OUTPUT
+        run: chmod +x find.sh && echo "projects=$(./find.sh "./release-please-config.json")" >> $GITHUB_OUTPUT
 
   build:
     name: Build verification testing
