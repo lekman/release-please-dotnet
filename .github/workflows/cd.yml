@@ -1,0 +1,24 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  TAG: v1
+
+jobs:
+  tag-release:
+    name: Tag Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create version tag
+        id: create_tag
+        run: |
+          git tag -f ${{ env.TAG }}
+          git push origin --tags --force

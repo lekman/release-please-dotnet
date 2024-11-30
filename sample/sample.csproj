@@ -1,9 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Sample project used to test release-please-dotnet action.</Description>
+    <Title>Lekman.ReleasePlease.Dotnet.Sample</Title>
+    <PackageId>Lekman.ReleasePlease.Dotnet.Sample</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <PackageProjectUrl>https://github.com/lekman/release-please-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/lekman/release-please-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
 </Project>
