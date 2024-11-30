@@ -70,8 +70,5 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Determine version
-        run: chmod +x version.sh && ./version.sh ${{ matrix.project }}
-
       - name: Build project
         run: chmod +x build.sh && ./build.sh ${{ matrix.project }}

@@ -5,6 +5,10 @@ inputs:
     description: "Path to the manifest file"
     required: false
     default: ".release-please-manifest.json"
+  config:
+    description: "Path to the release-please configuration file"
+    required: false
+    default: "release-please-config.json"
 runs:
   using: "composite"
   steps:
@@ -15,11 +19,9 @@ runs:
         chmod +x $path
         bash $path
 
-    - name: Test
+    - name: Bump versions
       shell: bash
       run: |
-        if [ -f "${{ inputs.manifest }}" ]; then
-          cat ${{ inputs.manifest }}
-        else
-          echo "File not found"
-        fi
+        path=${GITHUB_ACTION_PATH}/bump.sh
+        chmod +x $path
+        bash $path ${{ inputs.manifest }} ${{ inputs.config }}
