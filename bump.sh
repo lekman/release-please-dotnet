@@ -65,12 +65,6 @@ jq -r 'to_entries[] | "\(.key) \(.value)"' "$manifest" | while read -r project v
   git config --global user.name "github-actions[bot]"
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-  # Extract the branch name from GITHUB_REF
-  branch_name=$(echo "$GITHUB_REF" | sed 's|refs/heads/||')
-
-  # Check out the correct branch
-  git checkout "$branch_name"
-
   # Detect if any changes were made to the .csproj file
   if ! git diff --quiet "$project_file"; then
     # Stage the changes
@@ -78,6 +72,7 @@ jq -r 'to_entries[] | "\(.key) \(.value)"' "$manifest" | while read -r project v
 
     # Commit changes with a comment
     git commit -m "chore: bump $project to $version"
+    git branch --show-current | xargs -I {} git push --set-upstream origin {}
   else
     echo "No changes detected in $project_file"
   fi
