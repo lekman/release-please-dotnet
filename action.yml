@@ -1,46 +1,25 @@
 name: "release-please-dotnet"
-description: "Composite action to automate .NET release packaging using release-please"
+description: "Composite action to automate .NET package versioning using release-please"
 inputs:
-  path:
-    description: "Path to the project"
+  manifest:
+    description: "Path to the manifest file"
     required: false
-    default: ""
-  dotnet-version:
-    description: ".NET version"
-    required: false
-    default: "9.0.x"
-  github_token:
-    description: "GitHub token"
-    required: false
-  nuget_api_key:
-    description: "NuGet API key"
-    required: false
-  publish_github:
-    description: "Publish to GitHub"
-    required: false
-    default: "true"
+    default: ".release-please-manifest.json"
 runs:
   using: "composite"
   steps:
-    - name: Setup .NET
-      if: ${{ inputs.dotnet-version && inputs.dotnet-version != '' }}
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ inputs.dotnet-version }}
-
     - name: Install pre-requisites
       shell: bash
-      run: ./prerequisites.sh
+      run: |
+        path=${GITHUB_ACTION_PATH}/prerequisites.sh
+        chmod +x $path
+        bash $path
 
-    - name: Bump versions and publish
-      if: ${{ inputs.path && inputs.path != '' }}
+    - name: Test
       shell: bash
       run: |
-        parent_dir=$(dirname "${{ inputs.path }}")
-        cd $(dirname "$filename")
-        dotnet restore
-        dotnet build --configuration Release
-        # # dotnet pack --configuration Release
-        # # dotnet nuget push **/*.nupkg -k ${{ inputs.nuget_api_key }} -s https://api.nuget.org/v3/index.json
-      env:
-        GITHUB_TOKEN: ${{ inputs.github_token }}
+        if [ -f "${{ inputs.manifest }}" ]; then
+          cat ${{ inputs.manifest }}
+        else
+          echo "File not found"
+        fi
