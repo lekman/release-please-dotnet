@@ -1,0 +1,26 @@
+name: "release-please-dotnet"
+description: "Composite action to automate .NET package versioning using release-please"
+inputs:
+  manifest:
+    description: "Path to the manifest file"
+    required: false
+    default: ".release-please-manifest.json"
+  branch:
+    description: "Name of the branch to commit version changes to"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install pre-requisites
+      shell: bash
+      run: |
+        path=${GITHUB_ACTION_PATH}/prerequisites.sh
+        chmod +x $path
+        bash $path
+
+    - name: Bump versions
+      shell: bash
+      run: |
+        path=${GITHUB_ACTION_PATH}/bump.sh
+        chmod +x $path
+        bash $path ${{ inputs.manifest }} ${{ inputs.branch }}

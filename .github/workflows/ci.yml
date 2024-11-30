@@ -1,21 +1,27 @@
 name: Continuous Integration
 
 on:
+  workflow_dispatch:
+  pull_request:
   push:
-    branches:
-      - "feature*"
+    branches-ignore:
+      - "main"
 
 jobs:
   verify-prerequisites:
+    name: Verify prerequisites
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set permissions
+        run: chmod +x prerequisites.sh
+
       - name: Run prerequisites script
         run: ./prerequisites.sh
 
-      - name: Verify tools
+      - name: Verify outcome
         run: |
           if ! command -v gpr &> /dev/null; then
             echo "gpr tool is not installed"
@@ -29,3 +35,40 @@ jobs:
             echo "xmllint is not installed"
             exit 1
           fi
+
+  find:
+    name: Locate projects
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.find-projects.outputs.projects }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find project files
+        id: find-projects
+        run: |
+          chmod +x find.sh 
+          projects=$(./find.sh "./release-please-config.json" | tr -d '\t\n')
+          echo "projects=$projects" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build verification testing
+    needs: find
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.find.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Build project
+        run: chmod +x build.sh && ./build.sh ${{ matrix.project }}
