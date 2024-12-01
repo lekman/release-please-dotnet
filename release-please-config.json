@@ -7,5 +7,9 @@
 	"release-type": "simple",
 	"prerelease": true,
 	"bump-patch-for-minor-pre-major": true,
-	"extra-files": ["sample/sample.csproj", "sample/Class1.cs"]
+	"packages": {
+		"sample": {
+			"package-name": "Lekman.ReleasePlease.DotNet.Sample"
+		}
+	}
 }
