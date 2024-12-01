@@ -1,5 +1,9 @@
 name: "release-please-dotnet"
+author: "Tobias Lekman"
 description: "Composite action to automate .NET package versioning using release-please"
+branding:
+  icon: arrow-right-circle
+  color: black
 inputs:
   manifest:
     description: "Path to the manifest file"
