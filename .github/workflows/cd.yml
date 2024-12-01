@@ -1,16 +1,24 @@
 name: Continuous Deployment
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
-
+    # Run on changes and let release-please create
+    # PRs for version bumps and new releases
+    paths:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.sln"
+      - ".github/workflows/cd_release_please.yml"
+      - ".release-please-manifest.json"
+      - "release-please-config.json"
 env:
   TAG: v1
 
 jobs:
   tag-release:
     name: Tag Release
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +30,22 @@ jobs:
         run: |
           git tag -f ${{ env.TAG }}
           git push origin --tags --force
+
+  release-please:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+
+      - name: Run release-please
+        uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
