@@ -17,19 +17,19 @@ You should follow the instructions for  [`release-please-action`](https://github
 
   ```json
   {
-  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "include-component-in-tag": true,
-  "include-v-in-tag": true,
-  "tag-separator": "@",
-  "separate-pull-requests": true,
-  "release-type": "simple",
-  "prerelease": true,
-  "bump-patch-for-minor-pre-major": true,
-  "packages": {
-    "sample": {
-    "package-name": "Lekman.ReleasePlease.DotNet.Sample"
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+    "include-component-in-tag": true,
+    "include-v-in-tag": true,
+    "tag-separator": "@",
+    "separate-pull-requests": true,
+    "release-type": "simple",
+    "prerelease": true,
+    "bump-patch-for-minor-pre-major": true,
+    "packages": {
+      "sample": {
+      "package-name": "Lekman.ReleasePlease.DotNet.Sample"
+      }
     }
-  }
   }
   ```
 
