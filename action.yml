@@ -9,12 +9,14 @@ inputs:
     description: "Path to the manifest file"
     required: false
     default: ".release-please-manifest.json"
-  branch:
-    description: "Name of the branch to commit version changes to"
-    required: true
 runs:
   using: "composite"
   steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Install pre-requisites
       shell: bash
       run: |
@@ -22,9 +24,19 @@ runs:
         chmod +x $path
         bash $path
 
+    - name: Detect branch name
+      shell: bash
+      id: detect_branch
+      run: |
+        if [ "${{ github.event_name }}" == "pull_request" ]; then
+          echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+        else
+          echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+        fi
+
     - name: Bump versions
       shell: bash
       run: |
         path=${GITHUB_ACTION_PATH}/bump.sh
         chmod +x $path
-        bash $path ${{ inputs.manifest }} ${{ inputs.branch }}
+        bash $path ${{ inputs.manifest }} ${{ env.BRANCH_NAME }}

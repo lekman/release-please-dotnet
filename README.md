@@ -18,16 +18,10 @@ You should follow the instructions for  [`release-please-action`](https://github
   ```json
   {
     "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-    "include-component-in-tag": true,
-    "include-v-in-tag": true,
-    "tag-separator": "@",
-    "separate-pull-requests": true,
     "release-type": "simple",
-    "prerelease": true,
-    "bump-patch-for-minor-pre-major": true,
     "packages": {
       "sample": {
-      "package-name": "Lekman.ReleasePlease.DotNet.Sample"
+        "package-name": "Lekman.ReleasePlease.DotNet.Sample"
       }
     }
   }
@@ -35,14 +29,11 @@ You should follow the instructions for  [`release-please-action`](https://github
 
 ## Usage
 
-Simple usage:
-
 ```yaml
 - name: Bump .NET package versions
   uses: lekman/release-please-dotnet@v1
   with:
     manifest: ".release-please-manifest.json"
-    branch: ${{ github.head_ref }}
 ```
 
 Complete workflow example, with Nuget package publishing, and bumping versions during a push or PR.
@@ -52,6 +43,8 @@ name: "CD: Release and Publish"
 
 on:
   workflow_dispatch:
+  pull-request:
+    types: [labeled]
   push:
     # Run on changes and let release-please create
     # PRs for version bumps and new releases
@@ -95,7 +88,6 @@ jobs:
         uses: lekman/release-please-dotnet@v1
         with:
           manifest: ".release-please-manifest.json"
-          branch: ${{ github.head_ref }}
 
   publish:
     name: Publish
@@ -113,15 +105,10 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build
-
-      - name: Publish
-        run: dotnet publish -c Release
-
       - name: Publish to Nuget
-        run: dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+        run: |
+          dotnet restore
+          dotnet build
+          dotnet publish -c Release
+          dotnet nuget push **/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
 ```
