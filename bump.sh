@@ -66,9 +66,6 @@ jq -r 'to_entries[] | "\(.key) \(.value)"' "$manifest" | while read -r project v
   git config --global user.name "github-actions[bot]"
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-  # Check out the correct branch
-  git checkout "$branch_name"
-
   # Detect if any changes were made to the .csproj file
   if ! git diff --quiet "$project_file"; then
     # Stage the changes
