@@ -81,6 +81,8 @@ jq -r 'to_entries[] | "\(.key) \(.value)"' "$manifest" | while read -r project v
       
       # Push the changes to the branch
       git push origin "$branch_name"
+
+      echo "Successfully pushed $project version to $version to the branch: $branch_name" >> $GITHUB_STEP_SUMMARY
     fi
   fi
 done
