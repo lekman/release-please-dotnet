@@ -9,6 +9,10 @@ inputs:
     description: "Path to the manifest file"
     required: false
     default: ".release-please-manifest.json"
+  commit:
+    description: "Commit changes to current branch"
+    required: false
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -39,4 +43,4 @@ runs:
       run: |
         path=${GITHUB_ACTION_PATH}/bump.sh
         chmod +x $path
-        bash $path ${{ inputs.manifest }} ${{ env.BRANCH_NAME }}
+        bash $path ${{ inputs.manifest }} ${{ env.BRANCH_NAME }} ${{ inputs.commit }}
